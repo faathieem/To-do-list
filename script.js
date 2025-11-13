@@ -1,153 +1,67 @@
-// ===================================================
-// 1. Variabel Global dan Setup Awal
-// ===================================================
-let balance = 0;
-let transactions = [];
-let dailyExpense = 0; // Untuk menghitung Burn Rate hari ini
+const deskripsi = document.getElementById('deskripsi');
+const jumlah = document.getElementById('jumlah');
+const jenis = document.getElementById('jenis');
+const tambahBtn = document.getElementById('tambah');
+const daftarTransaksi = document.getElementById('daftarTransaksi');
+const saldoEl = document.getElementById('saldo');
+const totalMasukEl = document.getElementById('totalMasuk');
+const totalKeluarEl = document.getElementById('totalKeluar');
+const motivasiEl = document.getElementById('motivasi');
+const toggleThemeBtn = document.getElementById('toggle-theme');
 
-// Target Tabungan (Dapat diatur di fitur Setting, untuk saat ini fixed)
-const GOAL_TARGET = 1500000; 
-const DAILY_SAVING_RATE = 5000; // Contoh: Asumsi target menabung Rp 5.000 per hari
-const goalName = "Beli Sepatu Baru";
+let transaksi = JSON.parse(localStorage.getItem('transaksi')) || [];
 
-// Mengambil elemen HTML
-const currentBalanceEl = document.getElementById('current-balance');
-const goalTargetEl = document.getElementById('goal-target');
-const goalNameEl = document.getElementById('goal-name');
-const goalProgressEl = document.getElementById('goal-progress');
-const progressTextEl = document.getElementById('progress-text');
-const descriptionInput = document.getElementById('description');
-const amountInput = document.getElementById('amount');
-const typeSelect = document.getElementById('type');
-const addBtn = document.getElementById('add-btn');
-const transactionListEl = document.getElementById('transaction-list');
-const burnRateOutputEl = document.getElementById('burn-rate-output');
+const motivasi = [
+  "💪 Jangan boros, masa depanmu butuh kamu yang hemat!",
+  "🌱 Sedikit demi sedikit, lama-lama jadi bukit.",
+  "🏆 Remaja cerdas itu tahu cara mengatur uang!",
+  "💸 Nabung dulu, jajan nanti!",
+  "🔥 Jangan biarkan uangmu kabur tanpa arah!"
+];
+motivasiEl.textContent = motivasi[Math.floor(Math.random() * motivasi.length)];
 
-// Inisialisasi Tampilan Tujuan
-goalNameEl.textContent = goalName;
-goalTargetEl.textContent = formatRupiah(GOAL_TARGET);
+function updateUI() {
+  daftarTransaksi.innerHTML = '';
+  let totalMasuk = 0;
+  let totalKeluar = 0;
 
+  transaksi.forEach((t, index) => {
+    const li = document.createElement('li');
+    li.classList.add(t.jenis);
+    li.innerHTML = `${t.deskripsi} - Rp ${t.jumlah.toLocaleString()} 
+      <button onclick="hapus(${index})">❌</button>`;
+    daftarTransaksi.appendChild(li);
 
-// ===================================================
-// 2. Fungsi Pembantu
-// ===================================================
-function formatRupiah(number) {
-    return new Intl.NumberFormat('id-ID').format(number);
+    if (t.jenis === 'pemasukan') totalMasuk += t.jumlah;
+    else totalKeluar += t.jumlah;
+  });
+
+  const saldo = totalMasuk - totalKeluar;
+  saldoEl.textContent = Rp ${saldo.toLocaleString()};
+  totalMasukEl.textContent = Rp ${totalMasuk.toLocaleString()};
+  totalKeluarEl.textContent = Rp ${totalKeluar.toLocaleString()};
+  localStorage.setItem('transaksi', JSON.stringify(transaksi));
 }
 
-function updateBalance() {
-    currentBalanceEl.textContent = formatRupiah(balance);
+tambahBtn.addEventListener('click', () => {
+  if (!deskripsi.value || !jumlah.value) return alert('Isi semua data!');
+  transaksi.push({
+    deskripsi: deskripsi.value,
+    jumlah: parseInt(jumlah.value),
+    jenis: jenis.value
+  });
+  deskripsi.value = '';
+  jumlah.value = '';
+  updateUI();
+});
+
+function hapus(index) {
+  transaksi.splice(index, 1);
+  updateUI();
 }
 
-function updateGoalProgress() {
-    // Hitung persentase progress
-    const percentage = Math.min(100, (balance / GOAL_TARGET) * 100);
-    goalProgressEl.style.width = percentage.toFixed(2) + '%';
-    progressTextEl.textContent = Progress: ${percentage.toFixed(2)}%;
+toggleThemeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+});
 
-    if (percentage >= 100) {
-        progressTextEl.textContent += " 🎉 GOAL TERCAPAI!";
-    }
-}
-
-// ===================================================
-// 3. Logika Burn Rate (Unik Si Kancil)
-// ===================================================
-
-function updateBurnRate() {
-    let message = "";
-    
-    // Bandingkan Pengeluaran Harian dengan Target Tabungan Ideal
-    if (dailyExpense === 0) {
-        message = "Belum ada pengeluaran hari ini. Kancil Hebat!";
-        burnRateOutputEl.style.color = '#28a745';
-    } else if (dailyExpense <= DAILY_SAVING_RATE) {
-        message = Pengeluaranmu (${formatRupiah(dailyExpense)}) masih di bawah target hemat harian (${formatRupiah(DAILY_SAVING_RATE)}). Lanjutkan!;
-        burnRateOutputEl.style.color = '#ffc107';
-    } else {
-        const excess = dailyExpense - DAILY_SAVING_RATE;
-        message = ⚠️ TERLALU BOROS! Pengeluaranmu melebihi target hemat harian sebesar ${formatRupiah(excess)}. Coba hemat besok!;
-        burnRateOutputEl.style.color = '#dc3545';
-    }
-
-    burnRateOutputEl.textContent = message;
-}
-
-// ===================================================
-// 4. Menambah Transaksi
-// ===================================================
-
-function addTransaction() {
-    const description = descriptionInput.value.trim();
-    const amount = parseFloat(amountInput.value);
-    const type = typeSelect.value;
-
-    if (!description || isNaN(amount) || amount <= 0) {
-        alert("Pilot, masukkan deskripsi dan jumlah yang valid!");
-        return;
-    }
-
-    const transactionAmount = type === 'expense' ? -amount : amount;
-
-    // 1. Update Saldo
-    balance += transactionAmount;
-
-    // 2. Catat untuk Log
-    const newTransaction = {
-        description,
-        amount: amount,
-        type,
-        date: new Date().toLocaleDateString('id-ID')
-    };
-    transactions.push(newTransaction);
-
-    // 3. Update Daily Expense (Hanya jika pengeluaran)
-    if (type === 'expense') {
-        // Logika sederhana: asumsikan semua transaksi dicatat pada hari ini
-        dailyExpense += amount; 
-    }
-
-    // 4. Reset Input
-    descriptionInput.value = '';
-    amountInput.value = '';
-
-    // 5. Update Tampilan
-    renderTransactions();
-    updateBalance();
-    updateGoalProgress();
-    updateBurnRate(); // Paling penting!
-}
-
-// ===================================================
-// 5. Render Log Transaksi
-// ===================================================
-
-function renderTransactions() {
-    transactionListEl.innerHTML = ''; // Kosongkan
-    
-    // Tampilkan 5 transaksi terbaru
-    const recentTransactions = transactions.slice(-5).reverse(); 
-
-    recentTransactions.forEach(t => {
-        const listItem = document.createElement('li');
-        const sign = t.type === 'expense' ? '-' : '+';
-        const amountClass = t.type; // expense atau income
-
-        listItem.innerHTML = `
-            <span>${t.date} | ${t.description}</span>
-            <span class="${amountClass}">${sign} Rp ${formatRupiah(t.amount)}</span>
-        `;
-        transactionListEl.appendChild(listItem);
-    });
-}
-
-// ===================================================
-// 6. Event Listener
-// ===================================================
-
-addBtn.addEventListener('click', addTransaction);
-
-// Inisialisasi pertama kali
-updateBalance();
-updateGoalProgress();
-updateBurnRate();
+updateUI();
