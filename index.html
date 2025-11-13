@@ -3,130 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepSync - Tracker Tidur Gamified</title>
+    <title>TaskMaster - To-Do List Praktis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f0f8ff; font-family: Arial, sans-serif; }
-        .header { background-color: #4a90e2; color: white; padding: 20px; text-align: center; }
-        .dashboard { margin: 20px; }
-        .challenge { background-color: #e8f4fd; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-        .badge { background-color: #ffd700; color: black; padding: 5px 10px; border-radius: 5px; }
-        .level { font-weight: bold; color: #4a90e2; }
-        .leaderboard { background-color: #fffacd; padding: 15px; border-radius: 10px; }
-        canvas { max-width: 100%; height: 200px; }
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .header { background-color: #28a745; color: white; padding: 20px; text-align: center; }
+        .task-item { background-color: #ffffff; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; align-items: center; }
+        .task-item.completed { text-decoration: line-through; opacity: 0.6; }
+        .points { font-weight: bold; color: #28a745; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>SleepSync</h1>
-        <p>Tracker Tidur Gamified untuk Remaja</p>
-        <p class="level">Level Kamu: <span id="currentLevel">1</span> | Poin: <span id="currentPoints">0</span></p>
+        <h1>TaskMaster</h1>
+        <p>To-Do List Praktis untuk Remaja | Poin Kamu: <span id="totalPoints" class="points">0</span></p>
     </div>
 
-    <div class="container dashboard">
-        <h2>Dashboard Tidur Kamu</h2>
-        <p id="sleepStatus">Status Tidur: Belum dilacak hari ini.</p>
-        <button id="startTrack" class="btn btn-primary">Mulai Lacak Tidur</button>
-        <button id="viewChallenge" class="btn btn-success">Lihat Tantangan Harian</button>
-        <button id="playMusic" class="btn btn-info">Putar Musik Relaksasi</button>
-
-        <div id="chartSection" style="display: none;">
-            <h3>Grafik Tidur Mingguan</h3>
-            <canvas id="sleepChart"></canvas>
-        </div>
-
-        <div id="challengeSection" style="display: none;">
-            <h3>Tantangan Hari Ini</h3>
-            <div class="challenge">
-                <p id="challengeText">Coba minum teh herbal sebelum tidur dan catat 3 hal positif hari ini.</p>
-                <button id="completeChallenge" class="btn btn-warning">Selesai Tantangan</button>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Tambah Tugas Baru</h3>
+                <input type="text" id="taskInput" class="form-control" placeholder="Masukkan tugas baru (misal: Kerjakan PR Matematika)">
+                <button id="addTask" class="btn btn-primary mt-2">Tambah Tugas</button>
+            </div>
+            <div class="col-md-6">
+                <h3>Filter Tugas</h3>
+                <button id="showAll" class="btn btn-secondary">Semua</button>
+                <button id="showPending" class="btn btn-warning">Belum Selesai</button>
+                <button id="showCompleted" class="btn btn-success">Selesai</button>
             </div>
         </div>
 
-        <div id="badgeSection" style="display: none;">
-            <h3>Badge Kamu</h3>
-            <span class="badge">Dream Weaver (Streak 7 Hari)</span>
-        </div>
-
-        <div id="leaderboardSection" style="display: none;">
-            <h3>Leaderboard Komunitas</h3>
-            <div class="leaderboard">
-                <p>1. Alex - 150 Poin</p>
-                <p>2. Kamu - <span id="userPoints">0</span> Poin</p>
-                <p>3. Teman1 - 100 Poin</p>
-            </div>
-        </div>
+        <h3 class="mt-4">Daftar Tugas</h3>
+        <ul id="taskList" class="list-unstyled">
+            <!-- Tugas akan muncul di sini -->
+        </ul>
     </div>
 
     <script>
-        let sleepTracked = false;
-        let challengeCompleted = false;
+        let tasks = []; // Array untuk simpan tugas
         let points = 0;
-        let level = 1;
-        let sleepData = [6, 7, 5, 8, 7, 6, 9]; // Data tidur dummy (jam per hari, 7 hari)
 
-        // Update poin dan level
-        function updatePoints(addPoints) {
-            points += addPoints;
-            if (points >= 100) level = 2; // Naik level tiap 100 poin
-            document.getElementById('currentPoints').textContent = points;
-            document.getElementById('currentLevel').textContent = level;
-            document.getElementById('userPoints').textContent = points;
+        // Fungsi update poin
+        function updatePoints() {
+            document.getElementById('totalPoints').textContent = points;
         }
 
-        // Tombol lacak tidur
-        document.getElementById('startTrack').addEventListener('click', function() {
-            sleepTracked = true;
-            document.getElementById('sleepStatus').textContent = 'Status Tidur: Kamu tidur 7 jam malam ini! Bagus!';
-            document.getElementById('chartSection').style.display = 'block';
-            updatePoints(10); // Dapat 10 poin
-            drawChart();
-        });
+        // Fungsi render tugas
+        function renderTasks(filter = 'all') {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                if (filter === 'pending' && task.completed) return;
+                if (filter === 'completed' && !task.completed) return;
 
-        // Tombol lihat tantangan
-        document.getElementById('viewChallenge').addEventListener('click', function() {
-            document.getElementById('challengeSection').style.display = 'block';
-            document.getElementById('leaderboardSection').style.display = 'block';
-        });
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                if (task.completed) li.classList.add('completed');
 
-        // Tombol selesai tantangan
-        document.getElementById('completeChallenge').addEventListener('click', function() {
-            challengeCompleted = true;
-            document.getElementById('badgeSection').style.display = 'block';
-            updatePoints(20); // Dapat 20 poin
-            alert('Selamat! Kamu dapat poin, badge baru, dan naik level!');
-        });
-
-        // Tombol putar musik (simulasi)
-        document.getElementById('playMusic').addEventListener('click', function() {
-            alert('Musik relaksasi diputar! (Dalam versi nyata, ini akan putar audio dari server.)');
-            updatePoints(5); // Dapat 5 poin
-        });
-
-        // Fungsi gambar grafik
-        function drawChart() {
-            const ctx = document.getElementById('sleepChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-                    datasets: [{
-                        label: 'Jam Tidur',
-                        data: sleepData,
-                        borderColor: '#4a90e2',
-                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
+                li.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleComplete(${index})">
+                    <span class="ms-2">${task.text}</span>
+                    <button class="btn btn-danger btn-sm ms-auto" onclick="deleteTask(${index})">Hapus</button>
+                `;
+                taskList.appendChild(li);
             });
         }
+
+        // Tambah tugas
+        document.getElementById('addTask').addEventListener('click', function() {
+            const input = document.getElementById('taskInput');
+            if (input.value.trim() !== '') {
+                tasks.push({ text: input.value, completed: false });
+                input.value = '';
+                renderTasks();
+            }
+        });
+
+        // Toggle selesai
+        function toggleComplete(index) {
+            tasks[index].completed = !tasks[index].completed;
+            if (tasks[index].completed) points += 10; // Dapat 10 poin kalau selesai
+            updatePoints();
+            renderTasks();
+        }
+
+        // Hapus tugas
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        // Filter
+        document.getElementById('showAll').addEventListener('click', () => renderTasks('all'));
+        document.getElementById('showPending').addEventListener('click', () => renderTasks('pending'));
+        document.getElementById('showCompleted').addEventListener('click', () => renderTasks('completed'));
+
+        // Render awal
+        renderTasks();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
