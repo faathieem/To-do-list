@@ -1,52 +1,47 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Si Kancil: Goal-Tracker Keuangan</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind | Tracker Keuangan Remaja</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <h1>💰 MoneyMind</h1>
+    <p id="motivasi"></p>
+    <button id="toggle-theme">🌙 Ganti Tema</button>
+  </header>
 
-    <div class="container">
-        <h1>💰 Si Kancil: Keuangan Cerdik 💰</h1>
+  <main>
+    <section class="input-section">
+      <h2>Catat Transaksi</h2>
+      <input type="text" id="deskripsi" placeholder="Deskripsi (contoh: jajan, tabungan)" required>
+      <input type="number" id="jumlah" placeholder="Jumlah (Rp)" required>
+      <select id="jenis">
+        <option value="pemasukan">Pemasukan</option>
+        <option value="pengeluaran">Pengeluaran</option>
+      </select>
+      <button id="tambah">Tambah</button>
+    </section>
 
-        <div class="dashboard-ringkas">
-            <h2>Saldo Dompet: Rp <span id="current-balance">0</span></h2>
-            <p>Target Tabungan Saat Ini: <span id="goal-name">Beli Sepatu Baru</span> (Rp <span id="goal-target">1.500.000</span>)</p>
-            <div class="progress-bar-container">
-                <div id="goal-progress" class="progress-bar-fill"></div>
-            </div>
-            <p id="progress-text">Progress: 0%</p>
-        </div>
+    <section class="summary">
+      <h3>Ringkasan Keuangan</h3>
+      <p>Total Saldo: <span id="saldo">Rp 0</span></p>
+      <p>Total Pemasukan: <span id="totalMasuk">Rp 0</span></p>
+      <p>Total Pengeluaran: <span id="totalKeluar">Rp 0</span></p>
+    </section>
 
-        <hr>
+    <section class="list">
+      <h3>Riwayat Transaksi</h3>
+      <ul id="daftarTransaksi"></ul>
+    </section>
+  </main>
 
-        <div class="input-area">
-            <h3>Catat Transaksi Hari Ini</h3>
-            <input type="text" id="description" placeholder="Deskripsi (Contoh: Beli boba, Uang jajan)">
-            <input type="number" id="amount" placeholder="Jumlah (Rp)">
-            <select id="type">
-                <option value="income">Pemasukan (Income)</option>
-                <option value="expense">Pengeluaran (Expense)</option>
-            </select>
-            <button id="add-btn">Tambah Transaksi</button>
-        </div>
+  <footer>
+    <p>💡 Dibuat untuk remaja cerdas finansial | <a href="#">@MoneyMind</a></p>
+  </footer>
 
-        <hr>
-
-        <div class="visualisasi">
-            <h3>🔥 Burn Rate Hari Ini:</h3>
-            <p id="burn-rate-output">Belum ada pengeluaran.</p>
-        </div>
-        
-        <div class="log-area">
-            <h3>Riwayat Transaksi</h3>
-            <ul id="transaction-list">
-                </ul>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
