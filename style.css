@@ -1,0 +1,84 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6; /* Latar belakang cerah */
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #007bff;
+    text-align: center;
+}
+
+.dashboard-ringkas, .input-area, .visualisasi {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Gaya Input */
+.input-area input, .input-area select, .input-area button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+}
+
+#add-btn {
+    background-color: #28a745; /* Hijau untuk aksi utama */
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+#add-btn:hover {
+    background-color: #218838;
+}
+
+/* Progress Bar (Visualisasi Tujuan) */
+.progress-bar-container {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+.progress-bar-fill {
+    height: 100%;
+    width: 0%; /* Diatur oleh JS */
+    background-color: #ffc107; /* Warna Kuning Cerdas Si Kancil */
+    transition: width 0.5s ease-in-out;
+}
+#progress-text {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Riwayat Transaksi */
+.log-area li {
+    list-style: none;
+    padding: 8px 0;
+    border-bottom: 1px dotted #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+}
+.expense {
+    color: #dc3545; /* Merah untuk pengeluaran */
+    font-weight: bold;
+}
+.income {
+    color: #28a745; /* Hijau untuk pemasukan */
+    font-weight: bold;
+}
