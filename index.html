@@ -1,462 +1,52 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MoneySmart - Tracker Keuangan Remaja</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
-
-  :root {
-    --primary-color: #4caf50;
-    --secondary-color: #81c784;
-    --background-light: #f9f9f9;
-    --background-dark: #222;
-    --text-light: #f0f0f0;
-    --text-dark: #222;
-    --accent-color: #ffca28;
-    --danger-color: #e53935;
-    --border-radius: 12px;
-    --max-width: 480px;
-  }
-
-  body {
-    font-family: 'Rubik', sans-serif;
-    background: var(--background-light);
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    padding: 2rem 1rem;
-    transition: background-color 0.4s;
-  }
-
-  body.dark {
-    background: var(--background-dark);
-    color: var(--text-light);
-  }
-
-  .container {
-    width: 100%;
-    max-width: var(--max-width);
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    padding: 1.8rem 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  body.dark .container {
-    background: #333;
-  }
-
-  header {
-    text-align: center;
-    margin-bottom: 1.6rem;
-  }
-
-  header h1 {
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 0.2rem;
-    letter-spacing: 2px;
-  }
-
-  header p {
-    font-weight: 500;
-    color: #666;
-    margin-top: 0;
-  }
-
-  body.dark header p {
-    color: #ccc;
-  }
-
-  .balance {
-    text-align: center;
-    margin: 1.4rem 0 2rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-
-  .balance span {
-    color: var(--primary-color);
-  }
-
-  body.dark .balance span {
-    color: var(--accent-color);
-  }
-
-  .input-group {
-    display: flex;
-    gap: 0.7rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .input-group input, .input-group select {
-    flex: 1;
-    padding: 0.7rem 1rem;
-    border: 2px solid var(--primary-color);
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-
-  .input-group input:focus, .input-group select:focus {
-    border-color: var(--accent-color);
-  }
-
-  body.dark .input-group input, 
-  body.dark .input-group select {
-    background: #444;
-    color: var(--text-light);
-    border-color: #666;
-  }
-
-  .input-group input::placeholder {
-    color: #aaa;
-  }
-
-  body.dark .input-group input::placeholder {
-    color: #bbb;
-  }
-
-  button#addEntry {
-    background: var(--primary-color);
-    border: none;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: var(--border-radius);
-    transition: background 0.3s;
-  }
-
-  button#addEntry:hover {
-    background: var(--accent-color);
-    color: var(--text-dark);
-  }
-
-  body.dark button#addEntry:hover {
-    background: var(--accent-color);
-    color: var(--background-dark);
-  }
-
-  #entriesList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 320px;
-    overflow-y: auto;
-  }
-
-  #entriesList li {
-    display: flex;
-    justify-content: space-between;
-    background: var(--secondary-color);
-    margin: 0.5rem 0;
-    padding: 0.7rem 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    font-weight: 600;
-    transition: background 0.3s;
-  }
-
-  body.dark #entriesList li {
-    background: #555;
-  }
-
-  #entriesList li span.category {
-    font-style: italic;
-    opacity: 0.7;
-  }
-
-  #entriesList li span.amount.income {
-    color: #2e7d32; /* dark green */
-  }
-
-  #entriesList li span.amount.expense {
-    color: var(--danger-color);
-  }
-
-  #entriesList li button.deleteBtn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    color: var(--danger-color);
-    font-size: 1.1rem;
-    transition: color 0.3s;
-  }
-
-  #entriesList li button.deleteBtn:hover {
-    color: #b71c1c;
-  }
-
-  /* Gamification badges */
-  .badges {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 0.5rem 1rem;
-    background: var(--primary-color);
-    color: white;
-    font-weight: 700;
-    border-radius: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    user-select: none;
-    cursor: default;
-    transition: background 0.3s;
-  }
-
-  .badge.earned {
-    background: var(--accent-color);
-    color: var(--text-dark);
-  }
-
-  /* Motivational messages */
-  .message {
-    text-align: center;
-    font-style: italic;
-    color: #555;
-    margin-top: 1rem;
-    font-weight: 600;
-  }
-
-  body.dark .message {
-    color: #ccc;
-  }
-
-  /* Toggle Theme */
-  #themeToggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--primary-color);
-    border: none;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    color: white;
-    font-weight: 700;
-    font-size: 1.3rem;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    transition: background 0.3s;
-  }
-
-  #themeToggle:hover {
-    background: var(--accent-color);
-    color: var(--text-dark);
-  }
-
-  /* Responsive text overflow handling */
-  .text-ellipsis {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: 70%;
-    display: inline-block;
-    vertical-align: middle;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Si Kancil: Goal-Tracker Keuangan</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<button id="themeToggle" aria-label="Toggle dark/light mode">🌙</button>
 
-<div class="container" role="main" aria-label="MoneySmart tracker keuangan remaja">
-  <header>
-    <h1>MoneySmart</h1>
-    <p>Tracker Keuangan Praktis untuk Remaja, Supaya Lebih Suka Menabung & Berhemat.</p>
-  </header>
+    <div class="container">
+        <h1>💰 Si Kancil: Keuangan Cerdik 💰</h1>
 
-  <div class="balance" aria-live="polite">
-    Saldo Saat Ini: <span id="balanceAmount">Rp0</span>
-  </div>
+        <div class="dashboard-ringkas">
+            <h2>Saldo Dompet: Rp <span id="current-balance">0</span></h2>
+            <p>Target Tabungan Saat Ini: <span id="goal-name">Beli Sepatu Baru</span> (Rp <span id="goal-target">1.500.000</span>)</p>
+            <div class="progress-bar-container">
+                <div id="goal-progress" class="progress-bar-fill"></div>
+            </div>
+            <p id="progress-text">Progress: 0%</p>
+        </div>
 
-  <form id="entryForm" aria-label="Form tambah pemasukan atau pengeluaran">
-    <div class="input-group">
-      <input type="text" id="entryDesc" placeholder="Deskripsi (misal: Jajan es krim)" required aria-required="true" />
-      <input type="number" id="entryAmount" placeholder="Jumlah (Rp)" min="1" required aria-required="true" />
-      <select id="entryType" aria-label="Jenis transaksi">
-        <option value="income">Pemasukan</option>
-        <option value="expense">Pengeluaran</option>
-      </select>
-      <button type="submit" id="addEntry">Tambah</button>
+        <hr>
+
+        <div class="input-area">
+            <h3>Catat Transaksi Hari Ini</h3>
+            <input type="text" id="description" placeholder="Deskripsi (Contoh: Beli boba, Uang jajan)">
+            <input type="number" id="amount" placeholder="Jumlah (Rp)">
+            <select id="type">
+                <option value="income">Pemasukan (Income)</option>
+                <option value="expense">Pengeluaran (Expense)</option>
+            </select>
+            <button id="add-btn">Tambah Transaksi</button>
+        </div>
+
+        <hr>
+
+        <div class="visualisasi">
+            <h3>🔥 Burn Rate Hari Ini:</h3>
+            <p id="burn-rate-output">Belum ada pengeluaran.</p>
+        </div>
+        
+        <div class="log-area">
+            <h3>Riwayat Transaksi</h3>
+            <ul id="transaction-list">
+                </ul>
+        </div>
     </div>
-  </form>
 
-  <ul id="entriesList" aria-live="polite" aria-label="Daftar transaksi keuangan">
-    <!-- Daftar transaksi -->
-  </ul>
-
-  <div class="badges" aria-label="Lencana pencapaian keuangan">
-    <!-- Lencana akan muncul di sini -->
-  </div>
-
-  <div class="message" id="motivationalMessage" aria-live="polite">Ayo mulai kelola keuanganmu sekarang!</div>
-</div>
-
-<script>
-  const balanceAmountEl = document.getElementById('balanceAmount');
-  const entryForm = document.getElementById('entryForm');
-  const entryDesc = document.getElementById('entryDesc');
-  const entryAmount = document.getElementById('entryAmount');
-  const entryType = document.getElementById('entryType');
-  const entriesList = document.getElementById('entriesList');
-  const badgesContainer = document.querySelector('.badges');
-  const motivationalMessage = document.getElementById('motivationalMessage');
-  const themeToggle = document.getElementById('themeToggle');
-
-  // Data storage
-  let entries = JSON.parse(localStorage.getItem('moneySmartEntries')) || [];
-  let balance = 0;
-
-  // Format number ke format Rupiah
-  function formatRupiah(num) {
-    return "Rp" + num.toString().replace(/B(?=(d{3})+(?!d))/g, ".");
-  }
-
-  // Update saldo dan render list
-  function updateBalanceAndRender() {
-    balance = entries.reduce((acc, e) => e.type === 'income' ? acc + e.amount : acc - e.amount, 0);
-    balanceAmountEl.textContent = formatRupiah(balance);
-    
-    renderEntries();
-    renderBadges();
-    showMotivationalMessage();
-    saveData();
-  }
-
-  // Render list transaksi
-  function renderEntries() {
-    entriesList.innerHTML = "";
-    if(entries.length === 0){
-      let liEmpty = document.createElement('li');
-      liEmpty.textContent = "Belum ada transaksi. Ayo tambahkan!";
-      liEmpty.style.textAlign = "center";
-      liEmpty.style.fontWeight = "600";
-      liEmpty.style.opacity = "0.7";
-      entriesList.appendChild(liEmpty);
-      return;
-    }
-
-    entries.forEach((entry, i) => {
-      const li = document.createElement('li');
-      
-      const descSpan = document.createElement('span');
-      descSpan.textContent = entry.text;
-      descSpan.title = entry.text;
-      descSpan.classList.add('text-ellipsis');
-      li.appendChild(descSpan);
-
-      const categorySpan = document.createElement('span');
-      categorySpan.textContent = entry.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
-      categorySpan.className = 'category';
-      li.appendChild(categorySpan);
-
-      const amountSpan = document.createElement('span');
-      amountSpan.textContent = (entry.type === 'income' ? '+' : '-') + formatRupiah(entry.amount);
-      amountSpan.className = 'amount ' + entry.type;
-      li.appendChild(amountSpan);
-
-      const delBtn = document.createElement('button');
-      delBtn.textContent = '×';
-      delBtn.className = 'deleteBtn';
-      delBtn.setAttribute('aria-label', Hapus transaksi: ${entry.text});
-      delBtn.onclick = () => {
-        deleteEntry(i);
-      };
-      li.appendChild(delBtn);
-      entriesList.appendChild(li);
-    });
-  }
-
-  function deleteEntry(index) {
-    entries.splice(index,1);
-    updateBalanceAndRender();
-  }
-
-  // Badge system for gamification
-  // Badges: Simpan saldo di atas angka tertentu, atau buat 5+ transaksi pengeluaran hemat
-  function renderBadges() {
-    badgesContainer.innerHTML = '';
-
-    const badges = [];
-
-    // Badge 1: saldo di atas Rp500,000
-    if(balance >= 500000) badges.push({text: '🏆 Hemat Pro: Saldo > Rp500,000', earned: true});
-    else badges.push({text: '💡 Hemat Pro: Saldo > Rp500,000', earned: false});
-
-    // Badge 2: 5+ transaksi pengeluaran kecil (<= Rp20,000)
-    const smallExpenses = entries.filter(e => e.type === 'expense' && e.amount <= 20000).length;
-    if(smallExpenses >= 5) badges.push({text: '🎯 Pengendali Jajan: 5+ pengeluaran kecil', earned: true});
-    else badges.push({text: '👣 Pengendali Jajan: 5+ pengeluaran kecil', earned: false});
-
-    // Badge 3: transaksi masuk dan keluar minimal 10 total
-    if(entries.length >= 10) badges.push({text: '📅 Konsisten: 10+ transaksi', earned: true});
-    else badges.push({text: '⏳ Konsisten: 10+ transaksi', earned: false});
-
-    badges.forEach(badge => {
-      const span = document.createElement('span');
-      span.className = 'badge' + (badge.earned ? ' earned' : '');
-      span.textContent = badge.text;
-      badgesContainer.appendChild(span);
-    });
-  }
-
-  // Motivational messages based on balance
-  function showMotivationalMessage() {
-    if(balance <= 0) {
-      motivationalMessage.textContent = "Wah, saldo kamu kosong atau minus. Yuk hemat dan atur pengeluaran!";
-    } else if(balance < 100000) {
-      motivationalMessage.textContent = "Saldo kamu kecil, coba kurangi jajan dulu ya!";
-    } else if(balance < 500000){
-      motivationalMessage.textContent = "Bagus, mulai terlihat kamu rajin menabung!";
-    } else {
-      motivationalMessage.textContent = "Luar biasa! Kamu sudah penghemat ulung!";
-    }
-  }
-
-  // Simpan data ke localStorage
-  function saveData() {
-    localStorage.setItem('moneySmartEntries', JSON.stringify(entries));
-  }
-
-  // Input validasi dan submit
-  entryForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let desc = entryDesc.value.trim();
-    let amountVal = parseInt(entryAmount.value);
-    let type = entryType.value;
-
-    if(desc === '' || isNaN(amountVal) || amountVal <= 0) {
-      alert('Mohon isi deskripsi dan jumlah dengan benar.');
-      return;
-    }
-
-    entries.push({text: desc, amount: amountVal, type: type});
-    entryDesc.value = '';
-    entryAmount.value = '';
-    updateBalanceAndRender();
-  });
-
-  // Dark mode toggle
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    themeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-  });
-
-  // Inisialisasi
-  updateBalanceAndRender();
-
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
