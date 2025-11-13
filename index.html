@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepSync - Tracker Tidur Gamified</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f0f8ff; font-family: Arial, sans-serif; }
+        .header { background-color: #4a90e2; color: white; padding: 20px; text-align: center; }
+        .dashboard { margin: 20px; }
+        .challenge { background-color: #e8f4fd; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+        .badge { background-color: #ffd700; color: black; padding: 5px 10px; border-radius: 5px; }
+        .level { font-weight: bold; color: #4a90e2; }
+        .leaderboard { background-color: #fffacd; padding: 15px; border-radius: 10px; }
+        canvas { max-width: 100%; height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SleepSync</h1>
+        <p>Tracker Tidur Gamified untuk Remaja</p>
+        <p class="level">Level Kamu: <span id="currentLevel">1</span> | Poin: <span id="currentPoints">0</span></p>
+    </div>
+
+    <div class="container dashboard">
+        <h2>Dashboard Tidur Kamu</h2>
+        <p id="sleepStatus">Status Tidur: Belum dilacak hari ini.</p>
+        <button id="startTrack" class="btn btn-primary">Mulai Lacak Tidur</button>
+        <button id="viewChallenge" class="btn btn-success">Lihat Tantangan Harian</button>
+        <button id="playMusic" class="btn btn-info">Putar Musik Relaksasi</button>
+
+        <div id="chartSection" style="display: none;">
+            <h3>Grafik Tidur Mingguan</h3>
+            <canvas id="sleepChart"></canvas>
+        </div>
+
+        <div id="challengeSection" style="display: none;">
+            <h3>Tantangan Hari Ini</h3>
+            <div class="challenge">
+                <p id="challengeText">Coba minum teh herbal sebelum tidur dan catat 3 hal positif hari ini.</p>
+                <button id="completeChallenge" class="btn btn-warning">Selesai Tantangan</button>
+            </div>
+        </div>
+
+        <div id="badgeSection" style="display: none;">
+            <h3>Badge Kamu</h3>
+            <span class="badge">Dream Weaver (Streak 7 Hari)</span>
+        </div>
+
+        <div id="leaderboardSection" style="display: none;">
+            <h3>Leaderboard Komunitas</h3>
+            <div class="leaderboard">
+                <p>1. Alex - 150 Poin</p>
+                <p>2. Kamu - <span id="userPoints">0</span> Poin</p>
+                <p>3. Teman1 - 100 Poin</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sleepTracked = false;
+        let challengeCompleted = false;
+        let points = 0;
+        let level = 1;
+        let sleepData = [6, 7, 5, 8, 7, 6, 9]; // Data tidur dummy (jam per hari, 7 hari)
+
+        // Update poin dan level
+        function updatePoints(addPoints) {
+            points += addPoints;
+            if (points >= 100) level = 2; // Naik level tiap 100 poin
+            document.getElementById('currentPoints').textContent = points;
+            document.getElementById('currentLevel').textContent = level;
+            document.getElementById('userPoints').textContent = points;
+        }
+
+        // Tombol lacak tidur
+        document.getElementById('startTrack').addEventListener('click', function() {
+            sleepTracked = true;
+            document.getElementById('sleepStatus').textContent = 'Status Tidur: Kamu tidur 7 jam malam ini! Bagus!';
+            document.getElementById('chartSection').style.display = 'block';
+            updatePoints(10); // Dapat 10 poin
+            drawChart();
+        });
+
+        // Tombol lihat tantangan
+        document.getElementById('viewChallenge').addEventListener('click', function() {
+            document.getElementById('challengeSection').style.display = 'block';
+            document.getElementById('leaderboardSection').style.display = 'block';
+        });
+
+        // Tombol selesai tantangan
+        document.getElementById('completeChallenge').addEventListener('click', function() {
+            challengeCompleted = true;
+            document.getElementById('badgeSection').style.display = 'block';
+            updatePoints(20); // Dapat 20 poin
+            alert('Selamat! Kamu dapat poin, badge baru, dan naik level!');
+        });
+
+        // Tombol putar musik (simulasi)
+        document.getElementById('playMusic').addEventListener('click', function() {
+            alert('Musik relaksasi diputar! (Dalam versi nyata, ini akan putar audio dari server.)');
+            updatePoints(5); // Dapat 5 poin
+        });
+
+        // Fungsi gambar grafik
+        function drawChart() {
+            const ctx = document.getElementById('sleepChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                    datasets: [{
+                        label: 'Jam Tidur',
+                        data: sleepData,
+                        borderColor: '#4a90e2',
+                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
