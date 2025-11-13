@@ -3,559 +3,460 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TaskMaster Aesthetic - To-Do List Interaktif</title>
+<title>MoneySmart - Tracker Keuangan Remaja</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
 
   :root {
-    --green: #20c997;
-    --background-light: #f0f4f8;
-    --background-dark: #121212;
-    --glass-bg: rgba(255, 255, 255, 0.15);
-    --font-color-light: #222;
-    --font-color-dark: #eee;
-    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  }
-
-  * {
-    box-sizing: border-box;
-    scroll-behavior: smooth;
+    --primary-color: #4caf50;
+    --secondary-color: #81c784;
+    --background-light: #f9f9f9;
+    --background-dark: #222;
+    --text-light: #f0f0f0;
+    --text-dark: #222;
+    --accent-color: #ffca28;
+    --danger-color: #e53935;
+    --border-radius: 12px;
+    --max-width: 480px;
   }
 
   body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    min-height: 100vh;
+    font-family: 'Rubik', sans-serif;
     background: var(--background-light);
-    color: var(--font-color-light);
-    transition: background 0.5s, color 0.5s;
-    backdrop-filter: blur(20px);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    transition: background-color 0.4s;
   }
 
   body.dark {
     background: var(--background-dark);
-    color: var(--font-color-dark);
+    color: var(--text-light);
   }
 
   .container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem 2rem 3rem;
-    background: var(--glass-bg);
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(12px);
+    width: 100%;
+    max-width: var(--max-width);
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 1.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  body.dark .container {
+    background: #333;
   }
 
   header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.6rem;
   }
 
   header h1 {
-    font-weight: 600;
-    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
     margin-bottom: 0.2rem;
     letter-spacing: 2px;
-    color: var(--green);
   }
 
   header p {
     font-weight: 500;
-    font-size: 1.15rem;
-    user-select: none;
+    color: #666;
+    margin-top: 0;
   }
 
+  body.dark header p {
+    color: #ccc;
+  }
+
+  .balance {
+    text-align: center;
+    margin: 1.4rem 0 2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .balance span {
+    color: var(--primary-color);
+  }
+
+  body.dark .balance span {
+    color: var(--accent-color);
+  }
+
+  .input-group {
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .input-group input, .input-group select {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .input-group input:focus, .input-group select:focus {
+    border-color: var(--accent-color);
+  }
+
+  body.dark .input-group input, 
+  body.dark .input-group select {
+    background: #444;
+    color: var(--text-light);
+    border-color: #666;
+  }
+
+  .input-group input::placeholder {
+    color: #aaa;
+  }
+
+  body.dark .input-group input::placeholder {
+    color: #bbb;
+  }
+
+  button#addEntry {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    transition: background 0.3s;
+  }
+
+  button#addEntry:hover {
+    background: var(--accent-color);
+    color: var(--text-dark);
+  }
+
+  body.dark button#addEntry:hover {
+    background: var(--accent-color);
+    color: var(--background-dark);
+  }
+
+  #entriesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  #entriesList li {
+    display: flex;
+    justify-content: space-between;
+    background: var(--secondary-color);
+    margin: 0.5rem 0;
+    padding: 0.7rem 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-weight: 600;
+    transition: background 0.3s;
+  }
+
+  body.dark #entriesList li {
+    background: #555;
+  }
+
+  #entriesList li span.category {
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  #entriesList li span.amount.income {
+    color: #2e7d32; /* dark green */
+  }
+
+  #entriesList li span.amount.expense {
+    color: var(--danger-color);
+  }
+
+  #entriesList li button.deleteBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--danger-color);
+    font-size: 1.1rem;
+    transition: color 0.3s;
+  }
+
+  #entriesList li button.deleteBtn:hover {
+    color: #b71c1c;
+  }
+
+  /* Gamification badges */
+  .badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    user-select: none;
+    cursor: default;
+    transition: background 0.3s;
+  }
+
+  .badge.earned {
+    background: var(--accent-color);
+    color: var(--text-dark);
+  }
+
+  /* Motivational messages */
+  .message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  body.dark .message {
+    color: #ccc;
+  }
+
+  /* Toggle Theme */
   #themeToggle {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: var(--green);
+    background: var(--primary-color);
     border: none;
     border-radius: 50%;
     width: 45px;
     height: 45px;
     color: white;
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     transition: background 0.3s;
   }
 
   #themeToggle:hover {
-    background: #17a2b8;
+    background: var(--accent-color);
+    color: var(--text-dark);
   }
 
-  form {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
-  }
-
-  input[type="text"] {
-    flex-grow: 1;
-    padding: 0.9rem 1rem;
-    border-radius: 50px;
-    border: 2px solid var(--green);
-    outline: none;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-    background: transparent;
-    color: inherit;
-  }
-
-  input[type="text"]::placeholder {
-    color: rgba(0,0,0,0.5);
-  }
-
-  input[type="text"]:focus {
-    border-color: #17a2b8;
-  }
-
-  button#addTask {
-    background: var(--green);
-    border: none;
-    border-radius: 50px;
-    padding: 0 1.4rem;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: background 0.3s;
-  }
-
-  button#addTask:hover {
-    background: #17a2b8;
-  }
-
-  .filters {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .filters button {
-    background: transparent;
-    border: 2px solid var(--green);
-    border-radius: 50px;
-    padding: 0.4rem 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: var(--green);
-    transition: 0.3s;
-  }
-
-  .filters button.active, .filters button:hover {
-    background: var(--green);
-    color: white;
-  }
-
-  ul#taskList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li.task-item {
-    background: var(--glass-bg);
-    margin-bottom: 1rem;
-    padding: 1rem 1.5rem;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: var(--shadow);
-    transition: box-shadow 0.3s ease;
-  }
-
-  li.task-item:hover {
-    box-shadow: 0 0 12px var(--green);
-  }
-
-  li.task-item.completed {
-    text-decoration: line-through;
-    opacity: 0.6;
-  }
-
-  li.task-item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: var(--green);
-  }
-
-  li.task-item span.task-text {
-    flex-grow: 1;
-    font-size: 1.1rem;
-  }
-
-  li.task-item .btn-delete {
-    background: #dc3545;
-    border: none;
-    border-radius: 50px;
-    padding: 0.3rem 0.8rem;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  li.task-item .btn-delete:hover {
-    background: #a71d2a;
-  }
-
-  .points-container {
-    margin-top: 1.5rem;
-    background: var(--glass-bg);
-    padding: 1rem 1.5rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-
-  .points-container span {
-    font-weight: 700;
-    font-size: 2rem;
-    color: var(--green);
-  }
-
-  /* Progress bar styles */
-  .progress-bar {
-    height: 16px;
-    width: 100%;
-    background: #ddd;
-    border-radius: 8px;
+  /* Responsive text overflow handling */
+  .text-ellipsis {
     overflow: hidden;
-    margin-top: 0.75rem;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--green);
-    transition: width 0.5s ease;
-  }
-
-  /* Drag handle */
-  li.task-item .drag-handle {
-    cursor: grab;
-    font-size: 1.4rem;
-    margin-right: 0.7rem;
-    color: var(--green);
-    user-select: none;
-  }
-
-  /* Search bar */
-  #searchInput {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border-radius: 50px;
-    border: 2px solid var(--green);
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    outline: none;
-    background: transparent;
-    color: inherit;
-  }
-
-  /* Notification permission message */
-  #notificationMessage {
-    position: fixed;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--green);
-    color: white;
-    padding: 0.8rem 1.6rem;
-    border-radius: 30px;
-    box-shadow: var(--shadow);
-    font-weight: 600;
-    display: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 70%;
+    display: inline-block;
+    vertical-align: middle;
   }
 </style>
 </head>
 <body>
-<button id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
+<button id="themeToggle" aria-label="Toggle dark/light mode">🌙</button>
 
-<div class="container" role="main" aria-label="TaskMaster To-Do List Aesthetic">
+<div class="container" role="main" aria-label="MoneySmart tracker keuangan remaja">
   <header>
-    <h1>TaskMaster</h1>
-    <p>To-Do List Praktis & Interaktif | Poin Kamu: <span id="totalPoints" class="points">0</span></p>
+    <h1>MoneySmart</h1>
+    <p>Tracker Keuangan Praktis untuk Remaja, Supaya Lebih Suka Menabung & Berhemat.</p>
   </header>
 
-  <input type="text" id="searchInput" placeholder="Cari tugas..." aria-label="Cari tugas" />
+  <div class="balance" aria-live="polite">
+    Saldo Saat Ini: <span id="balanceAmount">Rp0</span>
+  </div>
 
-  <form id="taskForm" aria-label="Tambah Tugas Baru">
-    <input
-      type="text"
-      id="taskInput"
-      placeholder="Masukkan tugas baru (misal: Kerjakan PR Matematika)"
-      aria-required="true"
-      autocomplete="off"
-    />
-    <button id="addTask" type="submit" aria-label="Tambah tugas baru">Tambah</button>
+  <form id="entryForm" aria-label="Form tambah pemasukan atau pengeluaran">
+    <div class="input-group">
+      <input type="text" id="entryDesc" placeholder="Deskripsi (misal: Jajan es krim)" required aria-required="true" />
+      <input type="number" id="entryAmount" placeholder="Jumlah (Rp)" min="1" required aria-required="true" />
+      <select id="entryType" aria-label="Jenis transaksi">
+        <option value="income">Pemasukan</option>
+        <option value="expense">Pengeluaran</option>
+      </select>
+      <button type="submit" id="addEntry">Tambah</button>
+    </div>
   </form>
 
-  <div class="filters" role="group" aria-label="Filter tugas">
-    <button id="showAll" class="active" aria-pressed="true">Semua</button>
-    <button id="showPending" aria-pressed="false">Belum Selesai</button>
-    <button id="showCompleted" aria-pressed="false">Selesai</button>
-  </div>
-
-  <ul id="taskList" tabindex="0" aria-live="polite" aria-label="Daftar tugas">
-    <!-- Tugas muncul di sini -->
+  <ul id="entriesList" aria-live="polite" aria-label="Daftar transaksi keuangan">
+    <!-- Daftar transaksi -->
   </ul>
 
-  <div class="points-container" aria-live="polite">
-    Level Kamu: <span id="level">1</span> &nbsp;&nbsp; Progress:
-    <div class="progress-bar" aria-label="Progress level">
-      <div id="progressFill" class="progress-fill"></div>
-    </div>
+  <div class="badges" aria-label="Lencana pencapaian keuangan">
+    <!-- Lencana akan muncul di sini -->
   </div>
+
+  <div class="message" id="motivationalMessage" aria-live="polite">Ayo mulai kelola keuanganmu sekarang!</div>
 </div>
 
-<div id="notificationMessage" role="alert" aria-live="assertive">Notifikasi sudah diizinkan!</div>
-
 <script>
-  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  let points = parseInt(localStorage.getItem('points')) || 0;
-  let level = Math.floor(points / 100) + 1;
-  let draggedIndex = null;
+  const balanceAmountEl = document.getElementById('balanceAmount');
+  const entryForm = document.getElementById('entryForm');
+  const entryDesc = document.getElementById('entryDesc');
+  const entryAmount = document.getElementById('entryAmount');
+  const entryType = document.getElementById('entryType');
+  const entriesList = document.getElementById('entriesList');
+  const badgesContainer = document.querySelector('.badges');
+  const motivationalMessage = document.getElementById('motivationalMessage');
+  const themeToggle = document.getElementById('themeToggle');
 
-  const taskList = document.getElementById('taskList');
-  const totalPointsEl = document.getElementById('totalPoints');
-  const levelEl = document.getElementById('level');
-  const progressFill = document.getElementById('progressFill');
-  const searchInput = document.getElementById('searchInput');
-  const themeToggleBtn = document.getElementById('themeToggle');
-  const notificationMessage = document.getElementById('notificationMessage');
+  // Data storage
+  let entries = JSON.parse(localStorage.getItem('moneySmartEntries')) || [];
+  let balance = 0;
 
-  function saveState() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    localStorage.setItem('points', points);
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  // Format number ke format Rupiah
+  function formatRupiah(num) {
+    return "Rp" + num.toString().replace(/B(?=(d{3})+(?!d))/g, ".");
   }
 
-  function updatePoints() {
-    totalPointsEl.textContent = points;
-    level = Math.floor(points / 100) + 1;
-    levelEl.textContent = level;
-    const progress = (points % 100);
-    progressFill.style.width = progress + '%';
-    saveState();
+  // Update saldo dan render list
+  function updateBalanceAndRender() {
+    balance = entries.reduce((acc, e) => e.type === 'income' ? acc + e.amount : acc - e.amount, 0);
+    balanceAmountEl.textContent = formatRupiah(balance);
+    
+    renderEntries();
+    renderBadges();
+    showMotivationalMessage();
+    saveData();
   }
 
-  function renderTasks(filter = 'all', search = '') {
-    taskList.innerHTML = '';
-
-    if(tasks.length === 0){
-      const emptyMsg = document.createElement('p');
-      emptyMsg.textContent = 'Belum ada tugas. Tambah tugas baru yuk!';
-      emptyMsg.style.textAlign = 'center';
-      emptyMsg.style.padding = '1rem';
-      taskList.appendChild(emptyMsg);
+  // Render list transaksi
+  function renderEntries() {
+    entriesList.innerHTML = "";
+    if(entries.length === 0){
+      let liEmpty = document.createElement('li');
+      liEmpty.textContent = "Belum ada transaksi. Ayo tambahkan!";
+      liEmpty.style.textAlign = "center";
+      liEmpty.style.fontWeight = "600";
+      liEmpty.style.opacity = "0.7";
+      entriesList.appendChild(liEmpty);
       return;
     }
 
-    tasks.forEach((task, index) => {
-      if(filter === 'pending' && task.completed) return;
-      if(filter === 'completed' && !task.completed) return;
-      if(search && !task.text.toLowerCase().includes(search.toLowerCase())) return;
-
+    entries.forEach((entry, i) => {
       const li = document.createElement('li');
-      li.className = 'task-item';
-      if (task.completed) li.classList.add('completed');
-      li.draggable = true;
-      li.setAttribute('aria-label', 'Tugas: ' + task.text + (task.completed ? ', selesai' : ', belum selesai'));
-      li.setAttribute('data-index', index);
+      
+      const descSpan = document.createElement('span');
+      descSpan.textContent = entry.text;
+      descSpan.title = entry.text;
+      descSpan.classList.add('text-ellipsis');
+      li.appendChild(descSpan);
 
-      // Drag handle
-      const dragHandle = document.createElement('span');
-      dragHandle.className = 'drag-handle';
-      dragHandle.title = 'Seret untuk mengubah urutan tugas';
-      dragHandle.innerHTML = '&#x2630;'; // Hamburger icon as drag handle
-      li.appendChild(dragHandle);
+      const categorySpan = document.createElement('span');
+      categorySpan.textContent = entry.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
+      categorySpan.className = 'category';
+      li.appendChild(categorySpan);
 
-      // Checkbox
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = task.completed;
-      checkbox.setAttribute('aria-checked', task.completed);
-      checkbox.setAttribute('aria-label', 'Tandai tugas selesai');
-      checkbox.onchange = () => toggleComplete(index);
-      li.appendChild(checkbox);
+      const amountSpan = document.createElement('span');
+      amountSpan.textContent = (entry.type === 'income' ? '+' : '-') + formatRupiah(entry.amount);
+      amountSpan.className = 'amount ' + entry.type;
+      li.appendChild(amountSpan);
 
-      // Task text
-      const spanText = document.createElement('span');
-      spanText.className = 'task-text';
-      spanText.textContent = task.text;
-      li.appendChild(spanText);
-
-      // Delete button
       const delBtn = document.createElement('button');
-      delBtn.className = 'btn-delete';
-      delBtn.setAttribute('aria-label', 'Hapus tugas');
-      delBtn.textContent = 'Hapus';
-      delBtn.onclick = () => deleteTask(index);
+      delBtn.textContent = '×';
+      delBtn.className = 'deleteBtn';
+      delBtn.setAttribute('aria-label', Hapus transaksi: ${entry.text});
+      delBtn.onclick = () => {
+        deleteEntry(i);
+      };
       li.appendChild(delBtn);
-
-      // Drag events
-      li.addEventListener('dragstart', (e) => {
-        draggedIndex = index;
-        e.dataTransfer.effectAllowed = 'move';
-        li.style.opacity = '0.4';
-      });
-
-      li.addEventListener('dragend', () => {
-        draggedIndex = null;
-        li.style.opacity = '';
-      });
-
-      li.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-      });
-
-      li.addEventListener('drop', (e) => {
-        e.preventDefault();
-        if(draggedIndex === null) return;
-        const from = draggedIndex;
-        const to = index;
-        if(from !== to){
-          const movedTask = tasks.splice(from,1)[0];
-          tasks.splice(to, 0, movedTask);
-          saveState();
-          renderTasks(filter, searchInput.value);
-        }
-      });
-
-      taskList.appendChild(li);
+      entriesList.appendChild(li);
     });
   }
 
-  function toggleComplete(index) {
-    tasks[index].completed = !tasks[index].completed;
-    if (tasks[index].completed) {
-      points += 10; // Poin per tugas selesai
-      showNotification('Yeay! Kamu dapat 10 poin.');
-      scheduleReminder(tasks[index].text, 5);
-    }
-    updatePoints();
-    saveState();
-    renderTasks(currentFilter, searchInput.value);
+  function deleteEntry(index) {
+    entries.splice(index,1);
+    updateBalanceAndRender();
   }
 
-  function deleteTask(index) {
-    if (tasks[index].completed) {
-      points -= 10; // Kembalikan poin jika tugas sudah selesai
-      if(points < 0) points = 0;
-      updatePoints();
-    }
-    tasks.splice(index, 1);
-    saveState();
-    renderTasks(currentFilter, searchInput.value);
-  }
+  // Badge system for gamification
+  // Badges: Simpan saldo di atas angka tertentu, atau buat 5+ transaksi pengeluaran hemat
+  function renderBadges() {
+    badgesContainer.innerHTML = '';
 
-  // Undo feature (standby)
-  let undoStack = [];
-  function pushUndo() {
-    undoStack.push(JSON.stringify(tasks));
-    if (undoStack.length > 20) undoStack.shift();
-  }
-  function undo() {
-    if(undoStack.length > 0){
-      tasks = JSON.parse(undoStack.pop());
-      saveState();
-      renderTasks(currentFilter, searchInput.value);
-      updatePoints();
-    }
-  }
+    const badges = [];
 
-  // Notification reminder for a task (simple demo)
-  function scheduleReminder(taskText, minutes) {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') {
-      setTimeout(() => {
-        new Notification('Pengingat Tugas', {
-          body: Jangan lupa selesaikan: ${taskText},
-          icon: 'https://cdn-icons-png.flaticon.com/512/747/747310.png'
-        });
-      }, minutes * 60000);
-    }
-  }
-  function requestNotificationPermission() {
-    if (!('Notification' in window)) return;
-    if(Notification.permission === 'default'){
-      Notification.requestPermission().then(permission => {
-        if(permission === 'granted'){
-          notificationMessage.style.display = 'block';
-          setTimeout(() => {notificationMessage.style.display = 'none'}, 4000);
-        }
-      });
-    }
-  }
+    // Badge 1: saldo di atas Rp500,000
+    if(balance >= 500000) badges.push({text: '🏆 Hemat Pro: Saldo > Rp500,000', earned: true});
+    else badges.push({text: '💡 Hemat Pro: Saldo > Rp500,000', earned: false});
 
-  // Theme toggle
-  function toggleTheme() {
-    document.body.classList.toggle('dark');
-    themeToggleBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-    saveState();
-  }
-  themeToggleBtn.addEventListener('click', toggleTheme);
+    // Badge 2: 5+ transaksi pengeluaran kecil (<= Rp20,000)
+    const smallExpenses = entries.filter(e => e.type === 'expense' && e.amount <= 20000).length;
+    if(smallExpenses >= 5) badges.push({text: '🎯 Pengendali Jajan: 5+ pengeluaran kecil', earned: true});
+    else badges.push({text: '👣 Pengendali Jajan: 5+ pengeluaran kecil', earned: false});
 
-  // Search filter
-  searchInput.addEventListener('input', (e) => {
-    renderTasks(currentFilter, e.target.value);
-  });
+    // Badge 3: transaksi masuk dan keluar minimal 10 total
+    if(entries.length >= 10) badges.push({text: '📅 Konsisten: 10+ transaksi', earned: true});
+    else badges.push({text: '⏳ Konsisten: 10+ transaksi', earned: false});
 
-  // Filter buttons
-  let currentFilter = 'all';
-  const filterButtons = document.querySelectorAll('.filters button');
-  filterButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentFilter = btn.id.replace('show', '').toLowerCase();
-      filterButtons.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-      renderTasks(currentFilter, searchInput.value);
+    badges.forEach(badge => {
+      const span = document.createElement('span');
+      span.className = 'badge' + (badge.earned ? ' earned' : '');
+      span.textContent = badge.text;
+      badgesContainer.appendChild(span);
     });
-  });
+  }
 
-  // Form submit
-  const taskForm = document.getElementById('taskForm');
-  taskForm.addEventListener('submit', (e) => {
+  // Motivational messages based on balance
+  function showMotivationalMessage() {
+    if(balance <= 0) {
+      motivationalMessage.textContent = "Wah, saldo kamu kosong atau minus. Yuk hemat dan atur pengeluaran!";
+    } else if(balance < 100000) {
+      motivationalMessage.textContent = "Saldo kamu kecil, coba kurangi jajan dulu ya!";
+    } else if(balance < 500000){
+      motivationalMessage.textContent = "Bagus, mulai terlihat kamu rajin menabung!";
+    } else {
+      motivationalMessage.textContent = "Luar biasa! Kamu sudah penghemat ulung!";
+    }
+  }
+
+  // Simpan data ke localStorage
+  function saveData() {
+    localStorage.setItem('moneySmartEntries', JSON.stringify(entries));
+  }
+
+  // Input validasi dan submit
+  entryForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const input = document.getElementById('taskInput');
-    const val = input.value.trim();
-    if(val){
-      pushUndo();
-      tasks.push({ text: val, completed: false });
-      input.value = '';
-      saveState();
-      renderTasks(currentFilter, searchInput.value);
+    let desc = entryDesc.value.trim();
+    let amountVal = parseInt(entryAmount.value);
+    let type = entryType.value;
+
+    if(desc === '' || isNaN(amountVal) || amountVal <= 0) {
+      alert('Mohon isi deskripsi dan jumlah dengan benar.');
+      return;
     }
+
+    entries.push({text: desc, amount: amountVal, type: type});
+    entryDesc.value = '';
+    entryAmount.value = '';
+    updateBalanceAndRender();
   });
 
-  // Initialize from saved theme
-  function loadTheme(){
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme === 'dark'){
-      document.body.classList.add('dark');
-      themeToggleBtn.textContent = '☀️';
-    }
-  }
+  // Dark mode toggle
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    themeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  });
 
-  // Initial render
-  loadTheme();
-  updatePoints();
-  renderTasks();
+  // Inisialisasi
+  updateBalanceAndRender();
 
-  // Request notification permission on page load
-  window.onload = () => requestNotificationPermission();
 </script>
 </body>
 </html>
